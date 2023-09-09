@@ -44,14 +44,19 @@ try
         cts.Cancel();
         e.Cancel = true;
     };
-    using var senecClient = new HttpClient
+    var handler = new HttpClientHandler
+    {
+        ServerCertificateCustomValidationCallback = (_, _, _, _) => true
+    };
+    using var senecClient = new HttpClient(handler)
     {
         BaseAddress = new UriBuilder
         {
             Host = senec,
-            Port = 80,
-            Scheme = "http"
-        }.Uri
+            Port = 443,
+            Scheme = "https"
+        }.Uri,
+        
     };
     var response = await senecClient.PostAsync("lala.cgi",
         new StringContent("{\"DEBUG\":{\"SECTIONS\":\"\"},\"PLAIN\":{\"SECTIONS\":\"\"}}",
